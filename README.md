@@ -1,2 +1,0 @@
-# Encanto-Producciones
-Encanto Producciones
