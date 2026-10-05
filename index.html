@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encanto Producciones - Cotizador de Eventos Infantiles</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @media print {
+            @page { size: A4; margin: 12mm; }
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                display: block !important;
+                min-height: 0 !important;
+                font-size: 9.5pt !important;
+            }
+            main { max-width: none !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            main > div:not([x-show="currentTab === 'generator'"]) { display: none !important; }
+            header, footer { display: none !important; }
+            .print-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                overflow: visible !important;
+            }
+            .print-container * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .print-container .bg-gradient-to-br { background: linear-gradient(120deg, #fff1f2 0%, #f5f3ff 55%, #eef2ff 100%) !important; }
+            .print-container input, .print-container textarea, .print-container select { border: 0 !important; padding: 0 !important; color: #111827 !important; background: transparent !important; appearance: none !important; resize: none !important; }
+            .print-container input::placeholder, .print-container textarea::placeholder { color: transparent !important; }
+            .print-container tr, .print-container section, .print-container .rounded-xl, .print-container .rounded-2xl { break-inside: avoid; }
+            .print-container .overflow-x-auto { overflow: visible !important; }
+            .print-container table { width: 100% !important; font-size: 9pt !important; }
+            .print-container th, .print-container td { padding: 6px 8px !important; }
+            .print-container .text-xs { font-size: 8pt !important; }
+            .print-container .shadow, .print-container .shadow-sm, .print-container .shadow-md { box-shadow: none !important; }
+            .print-container { border: 1px solid #e2e8f0 !important; border-radius: 20px !important; }
+            .quote-hero { background: linear-gradient(125deg, #fce7f3 0%, #f3e8ff 52%, #e0e7ff 100%) !important; border-bottom: 3px solid #c084fc !important; }
+            .party-decoration { display: block !important; }
+            .quote-summary { box-shadow: 0 0 0 2px #f5d0fe !important; }
+            .print-container .quote-print-title { display: block !important; }
+            .print-container .quote-print-label { display: block !important; }
+            .print-container .quote-summary { background: #f5f3ff !important; border: 1px solid #c4b5fd !important; }
+            .print-container .quote-bank { background: #f8fafc !important; }
+            .print-container .quote-terms { background: #fffbeb !important; }
+            .print-container .quote-footer { color: #64748b !important; }
+            .print-container .section-heading { color: #6d28d9 !important; border-bottom: 1px solid #e9d5ff !important; padding-bottom: 5px !important; }
+            .print-container .client-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px 20px !important; }
+            .print-container .quote-item-print { font-weight: 700 !important; }
+            .print-container thead { display: table-header-group; }
+            .print-container img { max-height: 72px !important; }
+            .quote-client input, .quote-client select, .quote-notes textarea, .quote-line-input, .payment-tracking { display: none !important; }
+            .print-only { display: block !important; }
+            .print-money { display: inline !important; }
+            .quote-item-print { display: block !important; }
+            .quote-item-name, .quote-item-description, .quote-item-quantity-input, .quote-item-price-input { display: none !important; }
+            .quote-summary label { display: none !important; }
+            .print-internal-reference { display: none !important; }
+        }
+        
+        .print-only {
+            display: none;
+        }
+        [x-cloak] { display: none !important; }
+
+        .party-decoration { display: none; }
+        .party-balloon { display: inline-block; width: 13px; height: 17px; border-radius: 50% 50% 48% 48%; position: relative; margin: 0 5px 4px; }
+        .party-balloon::after { content: ''; position: absolute; width: 1px; height: 12px; background: #94a3b8; left: 6px; top: 16px; }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col" x-data="encantoApp()">
+
+    <header class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <template x-if="settings.logo">
+                        <img :src="settings.logo" alt="Logo Encanto Producciones" class="h-12 w-12 object-cover rounded-full bg-white p-1 border-2 border-white shadow">
+                    </template>
+                    <template x-if="!settings.logo">
+                        <div class="h-12 w-12 rounded-full bg-white text-pink-600 flex items-center justify-center font-extrabold text-2xl shadow">
+                            E
+                        </div>
+                    </template>
+                    <div>
+                        <h1 class="text-2xl font-black tracking-tight flex items-center gap-2">
+                            Encanto Producciones <i class="fa-solid font-normal fa-wand-magic-sparkles text-yellow-300 text-xl"></i>
+                        </h1>
+                        <p class="text-xs text-pink-100 flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot"></i> Concepción, Chile • Eventos Infantiles
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="flex flex-wrap gap-2 bg-white/10 p-1.5 rounded-xl backdrop-blur-md">
+                    <button @click="currentTab = 'generator'" :class="currentTab === 'generator' ? 'bg-white text-purple-700 font-bold shadow' : 'text-white hover:bg-white/20'" class="px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice"></i> Nueva Cotización
+                    </button>
+                    <button @click="currentTab = 'catalog'" :class="currentTab === 'catalog' ? 'bg-white text-purple-700 font-bold shadow' : 'text-white hover:bg-white/20'" class="px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-packing"></i> Catálogo Ítems
+                    </button>
+                    <button @click="currentTab = 'history'" :class="currentTab === 'history' ? 'bg-white text-purple-700 font-bold shadow' : 'text-white hover:bg-white/20'" class="px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Historial
+                        <span class="bg-pink-500 text-white text-xs px-2 py-0.5 rounded-full" x-text="history.length"></span>
+                    </button>
+                    <button @click="currentTab = 'settings'" :class="currentTab === 'settings' ? 'bg-white text-purple-700 font-bold shadow' : 'text-white hover:bg-white/20'" class="px-4 py-2 rounded-lg text-sm transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-gear"></i> Configuración
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <div x-show="currentTab === 'generator'" class="space-y-6">
+            
+            <!-- Notification banner -->
+            <template x-if="notification">
+                <div :class="notification.type === 'success' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 'bg-amber-100 border-amber-400 text-amber-800'" class="p-4 rounded-xl border flex justify-between items-center shadow-sm no-print">
+                    <div class="flex items-center gap-3">
+                        <i :class="notification.type === 'success' ? 'fa-solid fa-circle-check text-emerald-600' : 'fa-solid fa-triangle-exclamation text-amber-600'" class="text-xl"></i>
+                        <span class="font-medium" x-text="notification.message"></span>
+                    </div>
+                    <button @click="notification = null" class="text-slate-500 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </template>
+
+            <!-- Top Actions Toolbar -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4 no-print">
+                <div class="flex items-center gap-3">
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1.5 rounded-lg border border-purple-200">
+                        N° Correlativo: <span class="text-sm font-black text-purple-900" x-text="currentQuote.correlative"></span>
+                    </span>
+                    <button @click="resetQuote()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-arrows-rotate"></i> Reiniciar / Nueva
+                    </button>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button @click="saveQuote()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center gap-2 transition">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Cotización
+                    </button>
+                    <button @click="printPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center gap-2 transition">
+                        <i class="fa-solid fa-file-pdf"></i> Imprimir / PDF
+                    </button>
+                    <button @click="shareWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center gap-2 transition">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Compartir WhatsApp
+                    </button>
+                    <button @click="shareGmail()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center gap-2 transition">
+                        <i class="fa-solid fa-envelope"></i> Enviar por Email
+                    </button>
+                </div>
+            </div>
+
+            <template x-if="paymentAlerts.length">
+                <section class="bg-white border border-amber-200 rounded-2xl p-4 shadow-sm no-print" aria-live="polite">
+                    <h2 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-bell text-amber-500"></i> Seguimiento de pagos</h2>
+                    <p class="text-xs text-slate-500 mt-1">Revisa estas cotizaciones. Las alertas aparecen al abrir el cotizador cuando hay pagos pendientes o vencidos.</p>
+                    <div class="mt-3 space-y-2">
+                        <template x-for="quote in paymentAlerts" :key="quote.id">
+                            <div class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm">
+                                <span><strong x-text="quote.clientName"></strong> · <span x-text="quote.correlative"></span> · evento <span x-text="formatDate(quote.eventDate)"></span></span>
+                                <span class="font-semibold text-amber-800" x-text="paymentAlertText(quote)"></span>
+                                <button @click="openPaymentFollowup(quote)" class="text-purple-700 font-bold hover:underline">Ver seguimiento</button>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </template>
+
+            <!-- Quotation Sheet Container -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden print-container">
+                
+                <!-- Cotización / PDF Header -->
+                <div class="quote-hero relative p-6 md:p-8 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 border-b border-purple-200 overflow-hidden">
+                    <div class="party-decoration absolute right-8 top-3 text-2xl" aria-hidden="true"><span class="party-balloon bg-pink-400"></span><span class="party-balloon bg-purple-400"></span><span class="party-balloon bg-indigo-400"></span><span class="text-yellow-400">✦</span></div>
+                    <div class="flex flex-col md:flex-row justify-between items-start gap-6">
+                        <div class="flex items-center gap-4">
+                            <template x-if="settings.logo">
+                                <img :src="settings.logo" alt="Logo Productora" class="h-20 w-20 object-contain rounded-xl bg-white p-2 border border-slate-200 shadow-sm">
+                            </template>
+                            <template x-if="!settings.logo">
+                                <div class="h-20 w-20 rounded-xl bg-pink-500 text-white flex items-center justify-center font-black text-3xl shadow-sm">
+                                    EP
+                                </div>
+                            </template>
+                            <div>
+                                <h2 class="text-2xl font-black text-purple-900 tracking-tight" x-text="settings.companyName || 'Encanto Producciones'"></h2>
+                                <p class="text-sm font-medium text-slate-600" x-text="settings.slogan || 'Eventos & Pinta Caritas Infantiles'"></p>
+                                <div class="mt-2 text-xs text-slate-500 space-y-0.5">
+                                    <p class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-pink-500"></i> <span x-text="settings.city || 'Concepción, Chile'"></span></p>
+                                    <p class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-emerald-500"></i> <span x-text="settings.phone || '+56 9 1234 5678'"></span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-left md:text-right w-full md:w-auto border-t md:border-t-0 pt-4 md:pt-0 border-slate-200">
+                            <div class="print-internal-reference inline-block bg-purple-600 text-white px-4 py-2 rounded-xl shadow-sm mb-2">
+                                <p class="text-xs uppercase tracking-wider font-semibold">Cotización N°</p>
+                                <p class="text-xl font-black" x-text="currentQuote.correlative"></p>
+                            </div>
+                            <p class="text-xs text-slate-500">Fecha de emisión</p>
+                            <p class="text-sm font-bold text-slate-700" x-text="currentQuote.date"></p>
+                        </div>
+                    </div>
+                    <div class="quote-print-title hidden print-only mt-6 pt-4 border-t border-purple-200">
+                        <p class="text-xs uppercase tracking-[0.2em] font-bold text-purple-600">Propuesta de servicios</p>
+                        <p class="text-2xl font-black text-slate-800">Cotización para evento</p>
+                    </div>
+                </div>
+
+                <!-- Client Details & Event Info -->
+                <div class="quote-client p-6 md:p-8 bg-white border-b border-slate-100">
+                    <h3 class="section-heading text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-purple-500"></i> Información del Cliente y Evento
+                    </h3>
+                    
+                    <div class="client-grid grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Cliente *</label>
+                            <span class="quote-print-label hidden print-only text-sm font-semibold" x-text="currentQuote.clientName || '—'"></span>
+                            <input type="text" x-model="currentQuote.clientName" placeholder="Ej: Maria José Pérez" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Teléfono WhatsApp *</label>
+                            <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.clientPhone || '—'"></span>
+                            <input type="tel" x-model="currentQuote.clientPhone" placeholder="+56 9 8765 4321" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Email del Cliente</label>
+                            <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.clientEmail || '—'"></span>
+                            <input type="email" x-model="currentQuote.clientEmail" placeholder="cliente@ejemplo.cl" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Fecha del Evento *</label>
+                            <span class="quote-print-label hidden print-only text-sm font-semibold" x-text="formatDate(currentQuote.eventDate)"></span>
+                            <input type="date" x-model="currentQuote.eventDate" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Lugar del Evento / Dirección en Concepción</label>
+                            <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.eventAddress || '—'"></span>
+                            <input type="text" x-model="currentQuote.eventAddress" placeholder="Ej: Av. Principal 123, casa particular" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Comuna *</label>
+                            <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.eventCommune || 'Concepción'"></span>
+                            <select x-model="currentQuote.eventCommune" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
+                                <template x-for="commune in communes" :key="commune"><option :value="commune" x-text="commune"></option></template>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                        <h3 class="section-heading text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-purple-500"></i> Detalle de Servicios e Ítems
+                        </h3>
+                        <!-- Quick Add Selector -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto no-print">
+                            <select x-model="selectedCatalogItemId" class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white">
+                                <option value="">-- Seleccionar del Catálogo --</option>
+                                <template x-for="item in catalog" :key="item.id">
+                                    <option :value="item.id" x-text="item.name + ' - $' + formatNumber(item.price)"></option>
+                                </template>
+                            </select>
+                            <button @click="addSelectedCatalogItem()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition">
+                                <i class="fa-solid fa-plus"></i> Agregar Ítem
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl mb-6">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 uppercase text-[11px] font-extrabold tracking-wider border-b border-slate-200">
+                                    <th class="py-3 px-4 w-1/2">Servicio / Descripción</th>
+                                    <th class="py-3 px-4 text-center w-24">Cantidad</th>
+                                    <th class="py-3 px-4 text-right w-36">Precio Unit. ($)</th>
+                                    <th class="py-3 px-4 text-right w-36">Subtotal ($)</th>
+                                    <th class="py-3 px-4 text-center w-12 no-print">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <template x-for="(item, index) in currentQuote.items" :key="index">
+                                    <tr class="hover:bg-slate-50 transition">
+                                        <td class="py-3 px-4">
+                                            <input type="text" x-model="item.name" placeholder="Nombre del servicio" class="quote-item-name w-full bg-transparent font-medium text-slate-800 border-b border-transparent hover:border-slate-300 focus:border-purple-500 focus:outline-none py-1">
+                                            <span class="quote-item-print hidden print-only font-semibold" x-text="item.name"></span>
+                                            <input type="text" x-model="item.description" placeholder="Detalle adicional u observaciones (opcional)" class="quote-item-description w-full text-xs text-slate-500 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-purple-500 focus:outline-none py-0.5 mt-0.5">
+                                            <span class="quote-item-print hidden print-only text-xs text-slate-500" x-text="item.description"></span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center">
+                                            <input type="number" min="1" x-model.number="item.quantity" class="quote-item-quantity-input w-16 text-center py-1 border border-slate-200 rounded-md focus:ring-1 focus:ring-purple-500 focus:outline-none">
+                                            <span class="print-money hidden print-only" x-text="item.quantity"></span>
+                                        </td>
+                                        <td class="py-3 px-4 text-right">
+                                            <input type="number" min="0" x-model.number="item.price" class="quote-item-price-input w-28 text-right py-1 border border-slate-200 rounded-md focus:ring-1 focus:ring-purple-500 focus:outline-none">
+                                            <span class="print-money hidden print-only">$<span x-text="formatNumber(item.price)"></span></span>
+                                        </td>
+                                        <td class="py-3 px-4 text-right font-bold text-slate-800">
+                                            $<span x-text="formatNumber(item.quantity * item.price)"></span>
+                                        </td>
+                                        <td class="py-3 px-4 text-center no-print">
+                                            <button @click="removeItem(index)" class="text-rose-500 hover:text-rose-700 p-1 rounded transition">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template x-if="currentQuote.items.length === 0">
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-slate-400 italic">
+                                            No hay ítems agregados a esta cotización. Selecciona del catálogo arriba o haz clic en "Agregar Fila Personalizada".
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-8 no-print">
+                        <button @click="addEmptyItem()" class="border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-plus text-purple-600"></i> Fila Personalizada
+                        </button>
+                    </div>
+
+                    <!-- Totals and Payment Summary Box -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                        <!-- Notes / Special terms input -->
+                        <div class="quote-notes">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Notas Especiales o Observaciones</label>
+                            <div class="no-print mb-2 rounded-xl border border-purple-100 bg-purple-50/70 p-3">
+                                <label class="block text-[11px] font-bold text-purple-900 mb-2">Observaciones frecuentes · haz clic para agregarlas</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="observation in standardObservations" :key="observation.id">
+                                        <button type="button" @click="appendObservation(observation.text)" :class="currentQuote.notes.includes(observation.text) ? 'border-purple-600 bg-purple-100 text-purple-900' : 'border-purple-200 bg-white text-purple-800 hover:bg-purple-100'" class="rounded-lg border px-2.5 py-1.5 text-left text-[11px]" x-text="observation.title"></button>
+                                    </template>
+                                </div>
+                            </div>
+                            <textarea x-model="currentQuote.notes" rows="4" placeholder="Selecciona una observación frecuente o escribe una nota para este evento." class="w-full p-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-xs transition"></textarea>
+                            <p class="quote-print-label hidden print-only text-sm whitespace-pre-line" x-text="currentQuote.notes || 'Sin observaciones adicionales.'"></p>
+                        </div>
+
+                        <!-- Subtotal, Abono 50% & Total -->
+                        <div class="quote-summary bg-purple-50/50 p-5 rounded-2xl border border-purple-100 space-y-3">
+                            <div class="flex justify-between text-sm text-slate-600">
+                                <span>Total General Evento:</span>
+                                <span class="font-bold text-slate-800 text-base">$<span x-text="formatNumber(calculateTotal())"></span></span>
+                            </div>
+                            <div class="flex justify-between text-sm text-purple-800 font-semibold bg-purple-100/70 p-2.5 rounded-xl border border-purple-200">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-coins text-purple-600"></i> Abono para Reserva ($):</span>
+                                <input id="depositAmount" type="text" inputmode="numeric" :value="formatNumber(currentQuote.depositAmount)" @input="setFormattedAmount('depositAmount', $event.target.value)" class="w-32 text-right font-extrabold text-base text-purple-900 bg-white/70 border border-purple-200 rounded-lg px-2 py-1 no-print">
+                                <span class="font-extrabold text-base text-purple-900 print-only">$<span x-text="formatNumber(currentQuote.depositAmount)"></span></span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Saldo Pendiente (Día del evento):</span>
+                                <span class="font-medium">$<span x-text="formatNumber(Math.max(0, calculateTotal() - currentQuote.depositAmount))"></span></span>
+                            </div>
+                            <div class="payment-tracking no-print grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-purple-200">
+                                <div class="sm:col-span-2 rounded-xl bg-white p-3">
+                                    <p class="text-xs font-bold text-purple-900">Estado: <span x-text="currentQuote.paymentStatus"></span></p>
+                                    <p class="mt-1 text-[11px] text-slate-500">Se actualiza automáticamente según los pagos registrados.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Monto recibido ($)</label>
+                                    <input type="number" min="1" :max="calculateTotal() - Number(currentQuote.paidAmount || 0)" x-model.number="paymentDraft.amount" class="w-full px-3 py-2 rounded-lg border border-purple-200 bg-white text-sm" placeholder="Monto del abono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Medio de pago</label>
+                                    <select x-model="paymentDraft.method" class="w-full px-3 py-2 rounded-lg border border-purple-200 bg-white text-sm"><option>Transferencia</option><option>Efectivo</option><option>Tarjeta</option><option>Otro</option></select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Detalle o referencia (opcional)</label>
+                                    <input type="text" x-model="paymentDraft.detail" placeholder="Ej.: abono de reserva, comprobante 123" class="w-full px-3 py-2 rounded-lg border border-purple-200 bg-white text-sm">
+                                </div>
+                                <div class="sm:col-span-2 flex flex-wrap gap-2">
+                                    <button type="button" @click="paymentDraft.amount = Number(currentQuote.depositAmount) || 0" class="rounded-lg border border-purple-200 bg-white px-3 py-2 text-xs font-semibold text-purple-800">Usar abono acordado</button>
+                                    <button type="button" @click="paymentDraft.amount = Math.max(0, calculateTotal() - Number(currentQuote.paidAmount || 0))" class="rounded-lg border border-purple-200 bg-white px-3 py-2 text-xs font-semibold text-purple-800">Usar saldo pendiente</button>
+                                    <button type="button" @click="registerPayment()" class="rounded-lg bg-purple-600 px-3 py-2 text-xs font-bold text-white hover:bg-purple-700"><i class="fa-solid fa-plus mr-1"></i> Registrar pago</button>
+                                </div>
+                                <div class="sm:col-span-2 rounded-lg bg-white/70 p-3 text-xs text-slate-600">
+                                    <div class="flex flex-wrap justify-between gap-2">
+                                        <span><strong class="text-purple-900">Total recibido:</strong> $<span x-text="formatNumber(currentQuote.paidAmount)"></span></span>
+                                        <span><strong class="text-purple-900">Saldo:</strong> $<span x-text="formatNumber(Math.max(0, calculateTotal() - Number(currentQuote.paidAmount || 0)))"></span></span>
+                                        <span x-text="`${currentQuote.paymentEntries.length} pago(s)`"></span>
+                                    </div>
+                                </div>
+                                <template x-if="currentQuote.paymentEntries.length">
+                                    <div class="sm:col-span-2 space-y-1">
+                                        <p class="text-xs font-bold text-purple-900">Historial de pagos</p>
+                                        <template x-for="(payment, index) in currentQuote.paymentEntries" :key="payment.id || index">
+                                            <div class="flex items-center justify-between gap-3 rounded-lg bg-white px-3 py-2 text-xs">
+                                                <span><strong x-text="formatDate(payment.date)"></strong> · <span x-text="payment.method || 'Sin medio indicado'"></span><span x-show="payment.detail"> · <span x-text="payment.detail"></span></span></span>
+                                                <span class="flex items-center gap-2 whitespace-nowrap"><strong class="text-emerald-700">+$<span x-text="formatNumber(payment.amount)"></span></strong><button type="button" @click="removePayment(payment.id)" class="text-rose-500 hover:text-rose-700" title="Eliminar registro de pago"><i class="fa-solid fa-trash"></i></button></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Fecha límite del saldo</label>
+                                    <input type="date" x-model="currentQuote.paymentDueDate" class="w-full px-3 py-2 rounded-lg border border-purple-200 bg-white text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Último pago</label>
+                                    <p class="px-3 py-2 rounded-lg bg-white/70 text-sm text-slate-600" x-text="currentQuote.lastPaymentDate ? formatDate(currentQuote.lastPaymentDate) : 'Sin pagos registrados'"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                        <!-- Bank Details -->
+                        <div class="quote-bank bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
+                            <h4 class="font-bold text-slate-700 text-sm mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-building-columns text-purple-600"></i> Datos para Transferencia / Abono
+                            </h4>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">Banco:</span> <span x-text="settings.bankName || 'Banco Estado'"></span></p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">Tipo Cuenta:</span> <span x-text="settings.accountType || 'Cuenta Rut / Vista'"></span></p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">N° Cuenta:</span> <span x-text="settings.accountNumber || '19.091.298-1'"></span></p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">RUT:</span> <span x-text="settings.bankRut || '19.091.298-1'"></span></p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">Nombre:</span> <span x-text="settings.accountHolder || 'Barbara Pino Lagos'"></span></p>
+                            <p class="text-slate-600"><span class="font-semibold text-slate-700">Email Confirmación:</span> <span x-text="settings.bankEmail || 'Encantoproduccionescl@gmail.com'"></span></p>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="quote-terms bg-amber-50/60 p-4 rounded-xl border border-amber-200/80 space-y-1.5 text-amber-900">
+                            <h4 class="font-bold text-amber-950 text-sm mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-contract text-amber-600"></i> Términos y Condiciones de Reserva
+                            </h4>
+                    <p class="leading-relaxed">
+                                1. Para confirmar la fecha y hora de la producción en Concepción y sus alrededores, se requiere el abono indicado en esta cotización.
+                            </p>
+                            <p class="leading-relaxed">
+                                2. El saldo pendiente deberá ser cancelado en efectivo o transferencia antes de comenzar el evento.
+                            </p>
+                            <p class="leading-relaxed">
+                                3. Cotización válida por 7 días a contar de su fecha de emisión. Sujeta a disponibilidad de agenda.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="quote-footer mt-8 text-center text-xs text-slate-400 pt-4 border-t border-slate-100">
+                        <p>¡Gracias por preferir Encanto Producciones! Llevando magia y alegría a tu fiesta en Concepción.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentTab === 'catalog'" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Mantenedor de Ítems y Servicios</h2>
+                        <p class="text-xs text-slate-500">Agrega, edita o elimina los servicios del catálogo de Encanto Producciones.</p>
+                    </div>
+                    <button @click="openCatalogModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition">
+                        <i class="fa-solid fa-plus"></i> Nuevo Servicio
+                    </button>
+                </div>
+
+                <!-- Catalog Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <template x-for="(item, index) in catalog" :key="item.id">
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-bold text-slate-800 text-base" x-text="item.name"></h3>
+                                    <span class="bg-pink-100 text-pink-700 text-xs font-black px-2.5 py-1 rounded-lg" x-text="'$' + formatNumber(item.price)"></span>
+                                </div>
+                                <p class="text-xs text-slate-500 mb-4" x-text="item.description || 'Sin descripción adicional.'"></p>
+                            </div>
+                            <div class="flex justify-between items-center pt-3 border-t border-slate-100 text-xs">
+                                <button @click="addCatalogItemToCurrentQuote(item)" class="text-purple-600 hover:text-purple-800 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-plus-circle"></i> Usar en Cotización
+                                </button>
+                                <div class="space-x-2">
+                                    <button @click="editCatalogItem(item)" class="text-slate-500 hover:text-slate-700 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button @click="deleteCatalogItem(item.id)" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Catalog Add/Edit -->
+        <div x-show="showCatalogModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-cloak>
+            <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+                <h3 class="text-lg font-bold text-slate-800" x-text="editingCatalogItem.id ? 'Editar Servicio' : 'Nuevo Servicio'"></h3>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Servicio *</label>
+                    <input type="text" x-model="editingCatalogItem.name" placeholder="Ej: Castillo Inflable Dragón" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Precio ($) *</label>
+                    <input type="number" x-model.number="editingCatalogItem.price" placeholder="45000" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Descripción</label>
+                    <textarea x-model="editingCatalogItem.description" placeholder="Incluye monitor 3 horas..." class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button @click="showCatalogModal = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold">Cancelar</button>
+                    <button @click="saveCatalogItem()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-semibold">Guardar Servicio</button>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentTab === 'history'" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Historial de Cotizaciones</h2>
+                        <p class="text-xs text-slate-500">Consulta, vuelve a cargar o imprime cotizaciones anteriores.</p>
+                    </div>
+                    <div class="w-full sm:w-64">
+                        <input type="text" x-model="historySearch" placeholder="Buscar por cliente o correlativo..." class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-4 no-print">
+                    <button @click="historyPaymentFilter = 'Todos'" :class="historyPaymentFilter === 'Todos' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700'" class="px-3 py-1.5 rounded-lg text-xs font-semibold">Todos</button>
+                    <button @click="historyPaymentFilter = 'Pendientes'" :class="historyPaymentFilter === 'Pendientes' ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-800'" class="px-3 py-1.5 rounded-lg text-xs font-semibold">Con saldo (<span x-text="outstandingPaymentQuotes.length"></span>)</button>
+                    <button @click="historyPaymentFilter = 'Vencidos'" :class="historyPaymentFilter === 'Vencidos' ? 'bg-rose-600 text-white' : 'bg-rose-50 text-rose-800'" class="px-3 py-1.5 rounded-lg text-xs font-semibold">Vencidos (<span x-text="overduePaymentQuotes.length"></span>)</button>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 uppercase text-[11px] font-extrabold tracking-wider border-b border-slate-200">
+                                <th class="py-3 px-4">Correlativo</th>
+                                <th class="py-3 px-4">Fecha Emisión</th>
+                                <th class="py-3 px-4">Cliente</th>
+                                <th class="py-3 px-4">Fecha Evento / Comuna</th>
+                                <th class="py-3 px-4 text-right">Monto Total</th>
+                                <th class="py-3 px-4 text-center">Estado / pago</th>
+                                <th class="py-3 px-4 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <template x-for="quote in filteredHistory" :key="quote.id">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-3 px-4 font-bold text-purple-700" x-text="quote.correlative"></td>
+                                    <td class="py-3 px-4 text-slate-500 text-xs" x-text="quote.date"></td>
+                                    <td class="py-3 px-4 font-medium text-slate-800" x-text="quote.clientName || 'Sin Nombre'"></td>
+                                    <td class="py-3 px-4 text-slate-600 text-xs"><span x-text="formatDate(quote.eventDate)"></span><br><span x-text="quote.eventCommune || 'Concepción'"></span></td>
+                                    <td class="py-3 px-4 text-right font-bold text-slate-800">$<span x-text="formatNumber(quote.totalAmount)"></span></td>
+                                    <td class="py-3 px-4 text-center">
+                                        <select :value="quote.status || 'Pendiente'" @change="setQuoteStatus(quote.id, $event.target.value)" class="px-2 py-1 text-xs rounded-lg border border-slate-300 bg-white">
+                                            <option>Pendiente</option><option>Aceptada</option><option>Rechazada</option>
+                                        </select>
+                                        <p class="mt-1 text-[11px] text-slate-500" x-text="`${quote.paymentStatus || 'Pendiente'} · ${quote.paymentEntries?.length || 0} pago(s) · recibido $${formatNumber(quote.paidAmount || 0)} · saldo $${formatNumber(Math.max(0, Number(quote.totalAmount || 0) - Number(quote.paidAmount || 0)))}`"></p>
+                                        <template x-if="quote.paymentDueDate && Number(quote.paidAmount || 0) < Number(quote.totalAmount || 0)">
+                                            <p class="text-[11px] font-semibold text-amber-700" x-text="`Vence ${formatDate(quote.paymentDueDate)}`"></p>
+                                        </template>
+                                    </td>
+                                    <td class="py-3 px-4 text-center space-x-2">
+                                        <button @click="loadQuoteFromHistory(quote)" title="Cargar Cotización" class="text-purple-600 hover:text-purple-800 p-1"><i class="fa-solid fa-folder-open"></i></button>
+                                        <button @click="downloadCalendarEvent(quote)" title="Agregar evento al calendario Android" class="text-emerald-600 hover:text-emerald-800 p-1"><i class="fa-solid fa-calendar-plus"></i></button>
+                                        <button @click="deleteFromHistory(quote.id)" title="Eliminar" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template x-if="filteredHistory.length === 0">
+                                <tr>
+                                    <td colspan="7" class="py-8 text-center text-slate-400 italic">No hay cotizaciones registradas en el historial.</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="currentTab === 'settings'" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 mb-1">Configuración y Marca</h2>
+                <p class="text-xs text-slate-500 mb-6">Personaliza el logo, los datos bancarios y las observaciones frecuentes del cotizador.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Logo Upload Section -->
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2">Logo de la Empresa</h3>
+                        
+                        <div class="flex items-center gap-4">
+                            <div class="h-24 w-24 rounded-2xl border-2 border-dashed border-slate-300 flex items-center justify-center bg-slate-50 overflow-hidden relative">
+                                <template x-if="settings.logo">
+                                    <img :src="settings.logo" class="h-full w-full object-contain p-2">
+                                </template>
+                                <template x-if="!settings.logo">
+                                    <span class="text-slate-400 text-xs text-center p-2">Sin Logo</span>
+                                </template>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <input type="file" @change="handleLogoUpload" accept="image/png,image/jpeg,image/webp" id="logoInput" class="hidden">
+                                <label for="logoInput" class="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-xl text-xs font-semibold inline-block transition">
+                                    <i class="fa-solid fa-upload mr-1"></i> Subir Imagen
+                                </label>
+                                <template x-if="settings.logo">
+                                    <button @click="settings.logo = ''; saveSettings();" class="block text-xs text-rose-600 hover:underline">
+                                        Quitar Logo
+                                    </button>
+                                </template>
+                                <p class="text-[10px] text-slate-400">Recomendado: PNG o JPG con fondo transparente.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Fantasía</label>
+                                <input type="text" x-model="settings.companyName" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Eslogan / Subtítulo</label>
+                                <input type="text" x-model="settings.slogan" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Ciudad / Ubicación</label>
+                                <input type="text" x-model="settings.city" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Bank Details Section -->
+                    <div class="space-y-3">
+                        <h3 class="text-sm font-bold text-slate-700 border-b border-slate-100 pb-2">Datos de Cuenta Bancaria</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Banco</label>
+                            <input type="text" x-model="settings.bankName" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Tipo de Cuenta</label>
+                            <input type="text" x-model="settings.accountType" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Número de Cuenta</label>
+                            <input type="text" x-model="settings.accountNumber" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">RUT Titular</label>
+                            <input type="text" x-model="settings.bankRut" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Titular</label>
+                            <input type="text" x-model="settings.accountHolder" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Email para Enviar Comprobante</label>
+                            <input type="email" x-model="settings.bankEmail" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                        </div>
+
+                    </div>
+                </div>
+
+                <section class="mt-8 rounded-2xl border border-purple-200 bg-purple-50/50 p-5">
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="text-sm font-bold text-purple-900">Mantenedor de observaciones frecuentes</h3>
+                                <button @click="addObservationTemplate()" class="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-700"><i class="fa-solid fa-plus mr-1"></i>Nueva observación</button>
+                            </div>
+                            <p class="mt-1 text-[11px] text-slate-600">Crea tus propias frases aquí. Después aparecerán como botones sobre las notas de cada cotización.</p>
+                            <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                            <template x-for="(observation, index) in standardObservations" :key="observation.id">
+                                <div class="rounded-xl border border-slate-200 bg-white p-3 space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" x-model="observation.title" placeholder="Nombre corto (visible como botón)" class="min-w-0 flex-1 px-2 py-1.5 rounded-lg border border-slate-300 text-xs">
+                                        <button @click="removeObservationTemplate(index)" class="px-2 text-rose-600" title="Quitar observación"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                    <textarea x-model="observation.text" rows="3" placeholder="Escribe el texto que se agregará a las notas" class="w-full px-2 py-1.5 rounded-lg border border-slate-300 text-xs"></textarea>
+                                </div>
+                            </template>
+                            <template x-if="standardObservations.length === 0"><p class="rounded-xl border border-dashed border-purple-200 bg-white p-4 text-xs text-slate-500">Aún no hay observaciones. Usa “Nueva observación” para crear una.</p></template>
+                            </div>
+                            <div class="mt-4 flex flex-wrap justify-end gap-2">
+                                <button @click="saveObservations()" class="rounded-xl bg-purple-700 px-4 py-2 text-xs font-bold text-white hover:bg-purple-800"><i class="fa-solid fa-floppy-disk mr-1"></i>Guardar observaciones</button>
+                            </div>
+                </section>
+                <div class="mt-4 flex justify-end">
+                    <button @click="saveSettings()" class="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700">Guardar configuración</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 no-print">
+        <p>© Encanto Producciones - Concepción, Chile. Sistema de Cotizaciones Rápidas.</p>
+    </footer>
+
+    <script>
+        function encantoApp() {
+            return {
+                currentTab: 'generator',
+                notification: null,
+                paymentAlerts: [],
+                historySearch: '',
+                historyPaymentFilter: 'Todos',
+                selectedCatalogItemId: '',
+                showCatalogModal: false,
+                editingCatalogItem: { id: null, name: '', price: 0, description: '' },
+                communes: ['Concepción', 'Alto Biobío', 'Antuco', 'Arauco', 'Cabrero', 'Cañete', 'Chiguayante', 'Contulmo', 'Coronel', 'Curanilahue', 'Florida', 'Hualpén', 'Hualqui', 'Laja', 'Lebu', 'Los Álamos', 'Los Ángeles', 'Lota', 'Mulchén', 'Nacimiento', 'Negrete', 'Penco', 'Quilaco', 'Quilleco', 'Quillón', 'San Pedro de la Paz', 'San Rosendo', 'Santa Bárbara', 'Santa Juana', 'Talcahuano', 'Tirúa', 'Tomé', 'Tucapel', 'Yumbel'],
+                standardObservations: [{ id: 1, title: 'Duración, niños y traslado', text: 'Servicio de hasta 1 hora y 30 minutos para un máximo de 15 niños. Cada niño adicional tiene un valor de $1.000. El costo de traslado puede variar según la comuna y la dirección del evento.' }],
+                paymentDraft: { amount: 0, method: 'Transferencia', detail: '' },
+                defaultObservations: [{ id: 1, title: 'Duración, niños y traslado', text: 'Servicio de hasta 1 hora y 30 minutos para un máximo de 15 niños. Cada niño adicional tiene un valor de $1.000. El costo de traslado puede variar según la comuna y la dirección del evento.' }],
+
+                // Default Settings
+                settings: {
+                    logo: '',
+                    companyName: 'Encanto Producciones',
+                    slogan: 'Eventos & Pinta Caritas Infantiles',
+                    city: 'Concepción, Chile',
+                    phone: '+56945412176',
+                    bankName: 'Banco Estado',
+                    accountType: 'Cuenta Rut / Vista',
+                    accountNumber: '19.091.298-1',
+                    bankRut: '19.091.298-1',
+                    accountHolder: 'Barbara Pino Lagos',
+                    bankEmail: 'Encantoproduccionescl@gmail.com'
+                },
+
+                // Default Catalog Services
+                catalog: [
+                    { id: 1, name: 'Castillo Inflable Pequeño (3x3m)', price: 35000, description: 'Ideal para patios residenciales en Concepción. Incluye turbina.' },
+                    { id: 2, name: 'Cama Elástica 3.05m', price: 30000, description: 'Con malla de seguridad protectora.' },
+                    { id: 3, name: 'Pintacaritas', price: 35000, description: '' },
+                    { id: 4, name: 'Show de Magia e Ilusionismo', price: 60000, description: '45 minutos de show interactivo con palomas y participación infantil.' },
+                    { id: 5, name: 'Decoración Temática Básica', price: 50000, description: 'Arco de globos desestructurado + fondo temático a elección.' },
+                    { id: 6, name: 'Máquina de Algodón de Azúcar', price: 20000, description: 'Incluye insumos para 40 porciones de algodón.' },
+                    { id: 7, name: 'Equipo de Sonido & Micrófonos', price: 35000, description: 'Parlante activo con bluetooth y micrófono inalámbrico.' }
+                ],
+
+                // Current Quote State
+                currentQuote: {
+                    correlative: '',
+                    date: new Date().toLocaleDateString('es-CL'),
+                    clientName: '',
+                    clientPhone: '',
+                    clientEmail: '',
+                    eventDate: '',
+                    eventCommune: 'Concepción',
+                    eventAddress: '',
+                    notes: '',
+                    status: 'Pendiente',
+                    paymentStatus: 'Pendiente',
+                    paidAmount: 0,
+                    paymentEntries: [],
+                    paymentDueDate: '',
+                    lastPaymentDate: '',
+                    depositAmount: 5000,
+                    items: []
+                },
+
+                // Saved History
+                history: [],
+                nextQuoteNumber: 1,
+
+                init() {
+                    const storedSettings = this.readStoredValue('encanto_settings', {});
+                    this.settings = { ...this.settings, ...storedSettings };
+                    if (!storedSettings.phone || storedSettings.phone === '+56 9 8765 4321' || storedSettings.phone === '+56 9 1234 5678') {
+                        this.settings.phone = '+56945412176';
+                        this.persist('encanto_settings', this.settings);
+                    }
+                    this.standardObservations = this.readStoredValue('encanto_observations', this.standardObservations);
+                    if (!this.standardObservations.some(item => /duraci[oó]n.*niñ/i.test(item.title || ''))) {
+                        this.standardObservations.unshift({ ...this.defaultObservations[0] });
+                        this.persist('encanto_observations', this.standardObservations);
+                    }
+                    if (storedSettings.slogan === 'Eventos e Infancias Felices') this.settings.slogan = 'Eventos & Pinta Caritas Infantiles';
+                    if (storedSettings.accountHolder === 'Encanto Producciones SpA') this.settings.accountHolder = 'Barbara Pino Lagos';
+                    if (!storedSettings.bankRut || storedSettings.bankRut === '76.123.456-7') this.settings.bankRut = '19.091.298-1';
+                    if (storedSettings.accountNumber === '12345678') this.settings.accountNumber = '19.091.298-1';
+                    if (storedSettings.bankEmail === 'contacto@encantoproducciones.cl') this.settings.bankEmail = 'Encantoproduccionescl@gmail.com';
+                    if (storedSettings.accountType === 'CuentaRUT / Vista') this.settings.accountType = 'Cuenta Rut / Vista';
+                    if (storedSettings.bankName === 'BancoEstado') this.settings.bankName = 'Banco Estado';
+                    this.catalog = this.readStoredValue('encanto_catalog', this.catalog);
+                    const facePaint = this.catalog.find(item => /pintacaritas/i.test(item.name || ''));
+                    if (facePaint && facePaint.price === 25000) {
+                        facePaint.name = 'Pintacaritas';
+                        facePaint.price = 35000;
+                        facePaint.description = '';
+                        this.persist('encanto_catalog', this.catalog);
+                    } else if (!facePaint) {
+                        this.catalog.push({ id: Date.now(), name: 'Pintacaritas', price: 35000, description: '' });
+                        this.persist('encanto_catalog', this.catalog);
+                    }
+                    this.history = this.readStoredValue('encanto_history', this.history);
+                    this.history = this.history.map(quote => ({
+                        ...quote,
+                        paidAmount: Number(quote.paidAmount || 0),
+                        paymentEntries: Array.isArray(quote.paymentEntries) ? quote.paymentEntries : [],
+                        paymentStatus: quote.paymentStatus || (Number(quote.paidAmount || 0) >= Number(quote.totalAmount || 0) && Number(quote.totalAmount || 0) > 0 ? 'Pagado' : Number(quote.paidAmount || 0) > 0 ? 'Abono recibido' : 'Pendiente')
+                    }));
+                    this.refreshPaymentAlerts();
+                    this.nextQuoteNumber = this.readStoredValue('encanto_next_quote_number', 1);
+                    if (!Number.isInteger(this.nextQuoteNumber) || this.nextQuoteNumber < 1) this.nextQuoteNumber = 1;
+                    this.syncNextQuoteNumber();
+
+                    this.generateNextCorrelative();
+                },
+
+                generateNextCorrelative() {
+                    const year = new Date().getFullYear();
+                    const numStr = String(this.nextQuoteNumber).padStart(3, '0');
+                    this.currentQuote.correlative = `ENC-${year}-${numStr}`;
+                },
+
+                readStoredValue(key, fallback) {
+                    try {
+                        const value = localStorage.getItem(key);
+                        return value === null ? fallback : JSON.parse(value);
+                    } catch (error) {
+                        console.error(`No se pudieron leer los datos locales (${key}).`, error);
+                        this.showNotification('Hay datos guardados dañados. Se usarán valores predeterminados.', 'warning');
+                        return fallback;
+                    }
+                },
+
+                syncNextQuoteNumber() {
+                    const highest = this.history.reduce((max, quote) => {
+                        const match = String(quote.correlative || '').match(/^ENC-\\d{4}-(\\d+)$/);
+                        return match ? Math.max(max, Number(match[1])) : max;
+                    }, 0);
+                    this.nextQuoteNumber = Math.max(this.nextQuoteNumber, highest + 1);
+                    try { localStorage.setItem('encanto_next_quote_number', JSON.stringify(this.nextQuoteNumber)); }
+                    catch (error) { console.error('No se pudo guardar el correlativo.', error); }
+                },
+
+                persist(key, value) {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(value));
+                        return true;
+                    } catch (error) {
+                        console.error(`No se pudieron guardar los datos (${key}).`, error);
+                        this.showNotification(key === 'encanto_settings' ? 'No se pudo guardar la configuración. El logo puede superar el espacio disponible de este navegador.' : 'No hay espacio disponible para guardar. Elimina datos antiguos e inténtalo de nuevo.', 'warning');
+                        return false;
+                    }
+                },
+
+                formatNumber(num) {
+                    return Math.round(num || 0).toLocaleString('es-CL');
+                },
+
+                formatDate(value) {
+                    if (!value) return '—';
+                    const parts = value.split('-');
+                    return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : value;
+                },
+
+                appendObservation(text) {
+                    const note = String(text || '').trim();
+                    if (!note) return;
+                    const notes = String(this.currentQuote.notes || '').split('\n').map(line => line.trim()).filter(Boolean);
+                    this.currentQuote.notes = notes.includes(note) ? notes.filter(line => line !== note).join('\n') : [...notes, note].join('\n');
+                },
+
+                addObservationTemplate() {
+                    this.standardObservations.push({ id: Date.now(), title: '', text: '' });
+                },
+
+                removeObservationTemplate(index) {
+                    this.standardObservations.splice(index, 1);
+                },
+
+                saveObservations() {
+                    const cleaned = this.standardObservations
+                        .map((item, index) => ({ ...item, id: item.id || Date.now() + index, title: String(item.title || '').trim(), text: String(item.text || '').trim() }))
+                        .filter(item => item.title && item.text);
+                    if (cleaned.length !== this.standardObservations.length) {
+                        alert('Cada observación necesita un nombre corto y un texto. Las filas incompletas no se guardaron.');
+                        this.standardObservations = cleaned;
+                    } else {
+                        this.standardObservations = cleaned;
+                    }
+                    if (!this.persist('encanto_observations', this.standardObservations)) return;
+                    this.showNotification('Observaciones guardadas. Ya están disponibles en las cotizaciones.');
+                },
+
+                recalculatePaymentTotals() {
+                    const entries = Array.isArray(this.currentQuote.paymentEntries) ? this.currentQuote.paymentEntries : [];
+                    this.currentQuote.paidAmount = entries.reduce((sum, payment) => sum + Math.max(0, Number(payment.amount) || 0), 0);
+                    const total = this.calculateTotal();
+                    this.currentQuote.paymentStatus = this.currentQuote.paidAmount >= total && total > 0 ? 'Pagado' : this.currentQuote.paidAmount > 0 ? 'Abono recibido' : 'Pendiente';
+                    const latest = entries.map(payment => payment.date).filter(Boolean).sort().pop() || '';
+                    this.currentQuote.lastPaymentDate = latest;
+                },
+
+                registerPayment(amount = this.paymentDraft.amount) {
+                    const paymentAmount = Number(amount);
+                    if (!Number.isFinite(paymentAmount) || paymentAmount <= 0) {
+                        alert('Ingresa un monto de pago mayor a cero.');
+                        return;
+                    }
+                    this.recalculatePaymentTotals();
+                    const balance = Math.max(0, this.calculateTotal() - Number(this.currentQuote.paidAmount || 0));
+                    if (paymentAmount > balance) {
+                        alert(`El pago supera el saldo pendiente de $${this.formatNumber(balance)}.`);
+                        return;
+                    }
+                    if (!this.currentQuote.paymentEntries) this.currentQuote.paymentEntries = [];
+                    const today = new Date().toISOString().slice(0, 10);
+                    this.currentQuote.paymentEntries.push({ id: Date.now(), amount: paymentAmount, date: today, method: this.paymentDraft.method || 'Transferencia', detail: String(this.paymentDraft.detail || '').trim() });
+                    this.recalculatePaymentTotals();
+                    this.paymentDraft.amount = 0;
+                    this.paymentDraft.detail = '';
+                    if (this.persistQuotePayment()) this.showNotification(`Pago de $${this.formatNumber(paymentAmount)} registrado.`);
+                    else this.showNotification('Pago añadido. Guarda la cotización para conservar el registro.', 'warning');
+                },
+
+                removePayment(paymentId) {
+                    const entryIndex = this.currentQuote.paymentEntries.findIndex(payment => payment.id === paymentId);
+                    if (entryIndex < 0 || !confirm('¿Eliminar este pago del registro? El saldo se recalculará.')) return;
+                    this.currentQuote.paymentEntries.splice(entryIndex, 1);
+                    this.recalculatePaymentTotals();
+                    if (this.persistQuotePayment()) this.showNotification('Pago eliminado y saldo actualizado.');
+                    else this.showNotification('Pago eliminado de la cotización abierta. Guarda para conservar el cambio.', 'warning');
+                },
+
+                persistQuotePayment() {
+                    const quote = this.history.find(item => item.id === this.currentQuote.id || item.correlative === this.currentQuote.correlative);
+                    if (!quote) {
+                        this.showNotification('Guarda primero la cotización para iniciar su seguimiento de pagos.', 'warning');
+                        return false;
+                    }
+                    this.recalculatePaymentTotals();
+                    this.currentQuote.paymentDueDate = this.currentQuote.paymentDueDate || this.currentQuote.eventDate || '';
+                    quote.paidAmount = Number(this.currentQuote.paidAmount || 0);
+                    quote.paymentStatus = this.currentQuote.paymentStatus;
+                    quote.paymentEntries = JSON.parse(JSON.stringify(this.currentQuote.paymentEntries || []));
+                    quote.lastPaymentDate = this.currentQuote.lastPaymentDate || '';
+                    quote.paymentDueDate = this.currentQuote.paymentDueDate || '';
+                    if (!this.persist('encanto_history', this.history)) return false;
+                    this.currentQuote._previousPaidAmount = quote.paidAmount;
+                    this.refreshPaymentAlerts();
+                    return true;
+                },
+
+                setQuoteStatus(id, status) {
+                    const quote = this.history.find(item => item.id === id);
+                    if (!quote) return;
+                    quote.status = status;
+                    if (!this.persist('encanto_history', this.history)) return;
+                    this.refreshPaymentAlerts();
+                    this.showNotification(`Cotización marcada como ${status.toLowerCase()}`);
+                },
+
+                get outstandingPaymentQuotes() {
+                    return this.history.filter(quote => Number(quote.paidAmount || 0) < Number(quote.totalAmount || 0));
+                },
+
+                get overduePaymentQuotes() {
+                    const today = new Date().toISOString().slice(0, 10);
+                    return this.outstandingPaymentQuotes.filter(quote => quote.paymentDueDate && quote.paymentDueDate < today);
+                },
+
+                refreshPaymentAlerts() {
+                    const today = new Date().toISOString().slice(0, 10);
+                    this.paymentAlerts = this.history.filter(quote => {
+                        const unpaid = Number(quote.paidAmount || 0) < Number(quote.totalAmount || 0);
+                        return unpaid && (quote.status === 'Aceptada' || (quote.paymentDueDate && quote.paymentDueDate <= today));
+                    });
+                },
+
+                paymentAlertText(quote) {
+                    const balance = Math.max(0, Number(quote.totalAmount || 0) - Number(quote.paidAmount || 0));
+                    const overdue = quote.paymentDueDate && quote.paymentDueDate < new Date().toISOString().slice(0, 10);
+                    return `${overdue ? 'VENCIDO · ' : ''}Saldo $${this.formatNumber(balance)}${quote.paymentDueDate ? ` · vence ${this.formatDate(quote.paymentDueDate)}` : ' · sin fecha límite'}`;
+                },
+
+                openPaymentFollowup(quote) {
+                    this.loadQuoteFromHistory(quote);
+                    this.currentTab = 'generator';
+                    this.showNotification(`Seguimiento de pago de ${quote.clientName}`);
+                },
+
+                updatePaymentFromCurrentQuote() {
+                    if (!Array.isArray(this.currentQuote.paymentEntries)) this.currentQuote.paymentEntries = [];
+                    this.recalculatePaymentTotals();
+                    this.currentQuote._pendingPaymentDelta = 0;
+                },
+
+                downloadCalendarEvent(quote) {
+                    if (!quote.eventDate) {
+                        alert('Esta cotización no tiene fecha de evento.');
+                        return;
+                    }
+                    const date = quote.eventDate.replace(/-/g, '');
+                    const title = this.escapeCalendarText(`Evento Encanto - ${quote.clientName || 'Cliente'} (${quote.correlative})`);
+                    const description = this.escapeCalendarText(`Cliente: ${quote.clientName || ''}\nTeléfono: ${quote.clientPhone || ''}\nCotización: ${quote.correlative}\nEstado: ${quote.status || 'Pendiente'}\nTotal: $${this.formatNumber(quote.totalAmount)}`);
+                    const location = this.escapeCalendarText([quote.eventAddress || quote.eventLocation, quote.eventCommune || 'Concepción'].filter(Boolean).join(', '));
+                    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Encanto Producciones//Cotizador//ES', 'BEGIN:VEVENT', `UID:${quote.id}@encantoproducciones`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}`, `DTSTART;VALUE=DATE:${date}`, `SUMMARY:${title}`, `DESCRIPTION:${description}`, `LOCATION:${location}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+                    link.download = `${quote.correlative}-evento.ics`;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(link.href);
+                    this.showNotification('Archivo de calendario descargado. Ábrelo en Android para agregarlo a Calendar.');
+                },
+
+                escapeCalendarText(value) {
+                    return String(value || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+                },
+
+                setFormattedAmount(field, value) {
+                    const digits = String(value).replace(/\D/g, '');
+                    this.currentQuote[field] = digits ? Number(digits) : 0;
+                },
+
+                calculateTotal() {
+                    return this.currentQuote.items.reduce((sum, item) => sum + ((Number(item.quantity) || 0) * (Number(item.price) || 0)), 0);
+                },
+
+                validateQuote() {
+                    if (!String(this.currentQuote.clientName || '').trim()) return 'Ingresa el nombre del cliente.';
+                    if (!String(this.currentQuote.clientPhone || '').trim()) return 'Ingresa el teléfono WhatsApp del cliente.';
+                    if (!this.currentQuote.eventDate) return 'Selecciona la fecha del evento.';
+                    if (!this.currentQuote.items.length) return 'Agrega al menos un servicio a la cotización.';
+                    if (!Number.isFinite(Number(this.currentQuote.depositAmount)) || Number(this.currentQuote.depositAmount) < 0) return 'El abono debe ser un monto válido igual o mayor a cero.';
+                    const invalid = this.currentQuote.items.findIndex(item =>
+                        !String(item.name || '').trim() || !Number.isFinite(Number(item.quantity)) || Number(item.quantity) <= 0 ||
+                        !Number.isFinite(Number(item.price)) || Number(item.price) < 0
+                    );
+                    return invalid >= 0 ? `Revisa el servicio ${invalid + 1}: requiere nombre, cantidad mayor a cero y precio no negativo.` : '';
+                },
+
+                addEmptyItem() {
+                    this.currentQuote.items.push({ name: '', description: '', quantity: 1, price: 0 });
+                },
+
+                addSelectedCatalogItem() {
+                    if (!this.selectedCatalogItemId) return;
+                    const item = this.catalog.find(i => i.id == this.selectedCatalogItemId);
+                    if (item) {
+                        this.addCatalogItemToCurrentQuote(item);
+                        this.selectedCatalogItemId = '';
+                    }
+                },
+
+                addCatalogItemToCurrentQuote(item) {
+                    this.currentQuote.items.push({
+                        name: item.name,
+                        description: item.description,
+                        quantity: 1,
+                        price: item.price
+                    });
+                    this.showNotification('Ítem agregado a la cotización activa');
+                },
+
+                removeItem(index) {
+                    this.currentQuote.items.splice(index, 1);
+                },
+
+                resetQuote() {
+                    this.generateNextCorrelative();
+                    this.currentQuote.id = null;
+                    delete this.currentQuote.totalAmount;
+                    this.currentQuote.date = new Date().toLocaleDateString('es-CL');
+                    this.currentQuote.clientName = '';
+                    this.currentQuote.clientPhone = '';
+                    this.currentQuote.clientEmail = '';
+                    this.currentQuote.eventDate = '';
+                    this.currentQuote.eventCommune = 'Concepción';
+                    this.currentQuote.eventAddress = '';
+                    this.currentQuote.notes = '';
+                    this.currentQuote._previousPaidAmount = 0;
+                    this.currentQuote.paymentEntries = [];
+                    this.currentQuote.status = 'Pendiente';
+                    this.currentQuote.paymentStatus = 'Pendiente';
+                    this.currentQuote.paidAmount = 0;
+                    this.currentQuote.paymentDueDate = '';
+                    this.currentQuote.lastPaymentDate = '';
+                    this.currentQuote.items = [];
+                    this.currentQuote.depositAmount = 5000;
+                    this.showNotification('Nueva cotización iniciada');
+                },
+
+                // Catalog Management
+                openCatalogModal() {
+                    this.editingCatalogItem = { id: null, name: '', price: 0, description: '' };
+                    this.showCatalogModal = true;
+                },
+
+                editCatalogItem(item) {
+                    this.editingCatalogItem = { ...item };
+                    this.showCatalogModal = true;
+                },
+
+                saveCatalogItem() {
+                    if (!String(this.editingCatalogItem.name || '').trim() || !Number.isFinite(Number(this.editingCatalogItem.price)) || Number(this.editingCatalogItem.price) < 0) {
+                        alert('Ingresa un nombre y un precio válido (mayor o igual a cero).');
+                        return;
+                    }
+                    if (this.editingCatalogItem.id) {
+                        const idx = this.catalog.findIndex(c => c.id === this.editingCatalogItem.id);
+                        if (idx !== -1) this.catalog[idx] = { ...this.editingCatalogItem };
+                    } else {
+                        this.editingCatalogItem.id = Date.now();
+                        this.catalog.push({ ...this.editingCatalogItem });
+                    }
+                    this.editingCatalogItem.name = String(this.editingCatalogItem.name).trim();
+                    this.editingCatalogItem.price = Number(this.editingCatalogItem.price);
+                    if (!this.persist('encanto_catalog', this.catalog)) return;
+                    this.showCatalogModal = false;
+                    this.showNotification('Servicio guardado exitosamente en el catálogo');
+                },
+
+                deleteCatalogItem(id) {
+                    if (confirm('¿Deseas eliminar este servicio del catálogo?')) {
+                        this.catalog = this.catalog.filter(i => i.id !== id);
+                        if (!this.persist('encanto_catalog', this.catalog)) return;
+                        this.showNotification('Servicio eliminado del catálogo');
+                    }
+                },
+
+                // History & Persistence
+                saveQuote() {
+                    const validationError = this.validateQuote();
+                    if (validationError) {
+                        alert(validationError);
+                        return;
+                    }
+                    const total = this.calculateTotal();
+                    this.updatePaymentFromCurrentQuote();
+                    const previousQuote = this.history.find(q => q.id === this.currentQuote.id || q.correlative === this.currentQuote.correlative);
+                    const existingIndex = this.history.findIndex(q => q.id === this.currentQuote.id || q.correlative === this.currentQuote.correlative);
+                    const quoteToSave = {
+                        ...JSON.parse(JSON.stringify(this.currentQuote)),
+                        id: this.currentQuote.id || Date.now(),
+                        totalAmount: total
+                    };
+                    if (!Array.isArray(quoteToSave.paymentEntries)) quoteToSave.paymentEntries = [];
+                    if (previousQuote && !quoteToSave.paymentEntries.length && Number(previousQuote.paidAmount || 0) > 0) {
+                        quoteToSave.paymentEntries = [{ id: Date.now(), amount: Number(previousQuote.paidAmount), date: previousQuote.lastPaymentDate || '', method: 'Transferencia', detail: 'Registro anterior' }];
+                    }
+                    quoteToSave.paidAmount = quoteToSave.paymentEntries.reduce((sum, payment) => sum + Math.max(0, Number(payment.amount) || 0), 0);
+                    quoteToSave.paymentStatus = quoteToSave.paidAmount >= total && total > 0 ? 'Pagado' : quoteToSave.paidAmount > 0 ? 'Abono recibido' : 'Pendiente';
+                    quoteToSave.lastPaymentDate = quoteToSave.paymentEntries.map(payment => payment.date).filter(Boolean).sort().pop() || (existingIndex >= 0 ? this.history[existingIndex].lastPaymentDate || '' : '');
+                    if (existingIndex >= 0) this.history.splice(existingIndex, 1);
+                    this.history.unshift(quoteToSave);
+                    if (!this.persist('encanto_history', this.history)) return;
+                    const isNewQuote = existingIndex < 0;
+                    if (isNewQuote) {
+                        this.nextQuoteNumber = Math.max(this.nextQuoteNumber + 1, Number(String(this.currentQuote.correlative).split('-').pop()) + 1);
+                        this.persist('encanto_next_quote_number', this.nextQuoteNumber);
+                        this.generateNextCorrelative();
+                    }
+                    this.currentQuote.id = quoteToSave.id;
+                    this.currentQuote.totalAmount = total;
+                    this.currentQuote.lastPaymentDate = quoteToSave.lastPaymentDate;
+                    this.currentQuote.paymentStatus = quoteToSave.paymentStatus;
+                    this.currentQuote.paymentEntries = quoteToSave.paymentEntries;
+                    this.currentQuote._previousPaidAmount = Number(quoteToSave.paidAmount || 0);
+                    this.currentQuote._pendingPaymentDelta = 0;
+                    this.refreshPaymentAlerts();
+                    this.showNotification(existingIndex >= 0 ? 'Cotización actualizada en el historial' : 'Cotización guardada exitosamente en el historial');
+                },
+
+                loadQuoteFromHistory(quote) {
+                    this.currentQuote = JSON.parse(JSON.stringify(quote));
+                    this.currentQuote.paymentEntries = Array.isArray(this.currentQuote.paymentEntries) ? this.currentQuote.paymentEntries : [];
+                    if (!Number.isFinite(Number(this.currentQuote.depositAmount))) this.currentQuote.depositAmount = 5000;
+                    if (!this.currentQuote.eventCommune) this.currentQuote.eventCommune = 'Concepción';
+                    if (!this.currentQuote.eventAddress) this.currentQuote.eventAddress = this.currentQuote.eventLocation || '';
+                    if (!this.currentQuote.status) this.currentQuote.status = 'Pendiente';
+                    this.currentQuote.paidAmount = Number(this.currentQuote.paidAmount || 0);
+                    if (!this.currentQuote.paymentEntries.length && this.currentQuote.paidAmount > 0) {
+                        this.currentQuote.paymentEntries.push({ id: Date.now(), amount: this.currentQuote.paidAmount, date: this.currentQuote.lastPaymentDate || '', method: 'Transferencia', detail: 'Registro anterior' });
+                    }
+                    this.recalculatePaymentTotals();
+                    this.paymentDraft = { amount: 0, method: 'Transferencia', detail: '' };
+                    this.currentQuote._previousPaidAmount = this.currentQuote.paidAmount;
+                    if (!this.currentQuote.paymentDueDate && this.currentQuote.eventDate) this.currentQuote.paymentDueDate = this.currentQuote.eventDate;
+                    this.currentQuote.paymentStatus = this.currentQuote.paymentStatus || (this.currentQuote.paidAmount >= Number(this.currentQuote.totalAmount || 0) && Number(this.currentQuote.totalAmount || 0) > 0 ? 'Pagado' : this.currentQuote.paidAmount > 0 ? 'Abono recibido' : 'Pendiente');
+                    this.currentTab = 'generator';
+                    this.showNotification(`Cotización ${quote.correlative} cargada`);
+                },
+
+                deleteFromHistory(id) {
+                    if (confirm('¿Eliminar esta cotización del historial?')) {
+                        this.history = this.history.filter(q => q.id !== id);
+                        if (!this.persist('encanto_history', this.history)) return;
+                        this.showNotification('Cotización eliminada del historial');
+                    }
+                },
+
+                get filteredHistory() {
+                    const q = this.historySearch.toLowerCase();
+                    return this.history.filter(h => {
+                        const matchesSearch = !q || (h.clientName && h.clientName.toLowerCase().includes(q)) || (h.correlative && h.correlative.toLowerCase().includes(q));
+                        const outstanding = Number(h.paidAmount || 0) < Number(h.totalAmount || 0);
+                        const overdue = h.paymentDueDate && h.paymentDueDate < new Date().toISOString().slice(0, 10);
+                        const matchesPayment = this.historyPaymentFilter === 'Todos' || (this.historyPaymentFilter === 'Pendientes' && outstanding) || (this.historyPaymentFilter === 'Vencidos' && outstanding && overdue);
+                        return matchesSearch && matchesPayment;
+                    });
+                },
+
+                // Logo Upload & Settings
+                handleLogoUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+                            alert('Usa una imagen PNG, JPG o WebP.');
+                            event.target.value = '';
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.settings.logo = e.target.result;
+                            if (!this.persist('encanto_settings', this.settings)) {
+                                this.settings.logo = '';
+                                alert('El navegador no tiene espacio suficiente para guardar este logo. Prueba con una imagen más liviana o usa almacenamiento externo.');
+                                event.target.value = '';
+                                return;
+                            }
+                            this.showNotification('Logo actualizado y guardado en este navegador.');
+                        };
+                        reader.onerror = () => alert('No se pudo leer la imagen seleccionada.');
+                        reader.readAsDataURL(file);
+                    }
+                },
+
+                saveSettings() {
+                    this.standardObservations = this.standardObservations.filter(item => String(item.title || '').trim() && String(item.text || '').trim());
+                    if (!this.persist('encanto_settings', this.settings)) return;
+                    if (!this.persist('encanto_observations', this.standardObservations)) return;
+                    this.showNotification('Configuración guardada correctamente');
+                },
+
+                // Action Helpers: Print, WhatsApp, Email
+                printPDF() {
+                    document.title = `Cotizacion-${this.currentQuote.correlative}`;
+                    window.print();
+                },
+
+                shareWhatsApp() {
+                    const validationError = this.validateQuote();
+                    if (validationError) { alert(validationError); return; }
+                    const total = this.calculateTotal();
+                    const abono = Number(this.currentQuote.depositAmount) || 0;
+                    const phone = String(this.currentQuote.clientPhone || '').replace(/\D/g, '');
+                    
+                    let text = `¡Hola ${this.currentQuote.clientName || ''}! ✨ Le saludamos de *Encanto Producciones* (Concepción).\n\n`;
+                    text += `Adjuntamos el resumen de la propuesta para su evento:\n`;
+                    text += `📅 Fecha Evento: ${this.currentQuote.eventDate || 'A convenir'}\n`;
+                    text += `📍 Lugar: ${[this.currentQuote.eventAddress, this.currentQuote.eventCommune || 'Concepción'].filter(Boolean).join(', ')}\n\n`;
+                    text += `*Detalle:* \n`;
+                    this.currentQuote.items.forEach(i => {
+                        text += `• ${i.name} (x${i.quantity}): $${this.formatNumber(i.quantity * i.price)}\n`;
+                    });
+                    if (this.currentQuote.notes) text += `\n📝 *Observaciones:* ${this.currentQuote.notes}\n`;
+                    text += `\n💰 *Total Evento:* $${this.formatNumber(total)}\n`;
+                    text += `🔒 *Abono para reserva:* $${this.formatNumber(abono)}\n`;
+                    text += `💳 *Saldo pendiente:* $${this.formatNumber(Math.max(0, total - abono))}\n\n`;
+                    text += `Quedamos atentos a sus comentarios para confirmar la reserva de la fecha en nuestra agenda. 🎉`;
+
+                    const encodedText = encodeURIComponent(text);
+                    const url = phone ? `https://wa.me/${phone}?text=${encodedText}` : `https://wa.me/?text=${encodedText}`;
+                    window.open(url, '_blank');
+                },
+
+                shareGmail() {
+                    const validationError = this.validateQuote();
+                    if (validationError) { alert(validationError); return; }
+                    if (!String(this.currentQuote.clientEmail || '').trim()) { alert('Ingresa el email del cliente para preparar el correo.'); return; }
+                    const total = this.calculateTotal();
+                    const abono = Number(this.currentQuote.depositAmount) || 0;
+                    const subject = encodeURIComponent(`Propuesta para su evento - Encanto Producciones Concepción`);
+                    
+                    let body = `Estimado(a) ${this.currentQuote.clientName || 'Cliente'},\n\n`;
+                    body += `Junto con saludar, enviamos la propuesta de servicios para su evento de parte de Encanto Producciones (Concepción).\n\n`;
+                    body += `RESUMEN DE LA PROPUESTA\n`;
+                    body += `-----------------------------------------------\n`;
+                    body += `Fecha del Evento: ${this.currentQuote.eventDate || 'A convenir'}\n`;
+                    body += `Ubicación: ${[this.currentQuote.eventAddress, this.currentQuote.eventCommune || 'Concepción'].filter(Boolean).join(', ')}\n\n`;
+                    body += `DETALLE DE SERVICIOS:\n`;
+                    this.currentQuote.items.forEach(i => {
+                        body += `- ${i.name} x${i.quantity}: $${this.formatNumber(i.quantity * i.price)}\n`;
+                    });
+                    if (this.currentQuote.notes) body += `\nObservaciones: ${this.currentQuote.notes}\n`;
+                    body += `\nTOTAL GENERAL: $${this.formatNumber(total)}\n`;
+                    body += `ABONO REQUERIDO: $${this.formatNumber(abono)}\n`;
+                    body += `SALDO PENDIENTE: $${this.formatNumber(Math.max(0, total - abono))}\n\n`;
+                    body += `DATOS PARA TRANSFERENCIA:\n`;
+                    body += `Banco: ${this.settings.bankName}\n`;
+                    body += `Tipo Cuenta: ${this.settings.accountType}\n`;
+                    body += `N° Cuenta: ${this.settings.accountNumber}\n`;
+                    body += `RUT: ${this.settings.bankRut}\n`;
+                    body += `Nombre: ${this.settings.accountHolder}\n`;
+                    body += `Email Confirmación: ${this.settings.bankEmail}\n\n`;
+                    body += `Para reservar la fecha solicitada se requiere la confirmación del abono indicado.\n\n`;
+                    body += `Atentamente,\nEncanto Producciones - Concepción`;
+
+                    const mailtoUrl = `mailto:${encodeURIComponent(this.currentQuote.clientEmail.trim())}?subject=${subject}&body=${encodeURIComponent(body)}`;
+                    window.location.href = mailtoUrl;
+                },
+
+                showNotification(message, type = 'success') {
+                    this.notification = { message, type };
+                    setTimeout(() => {
+                        this.notification = null;
+                    }, 3500);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
