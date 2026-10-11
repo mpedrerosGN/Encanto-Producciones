@@ -153,7 +153,7 @@
             
             <!-- Notification banner -->
             <template x-if="notification">
-                <div :class="notification.type === 'success' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 'bg-amber-100 border-amber-400 text-amber-800'" class="p-4 rounded-xl border flex justify-between items-center shadow-sm no-print">
+                <div role="status" aria-live="polite" :class="notification.type === 'success' ? 'bg-emerald-100 border-emerald-400 text-emerald-800' : 'bg-amber-100 border-amber-400 text-amber-800'" class="p-4 rounded-xl border flex justify-between items-start gap-3 shadow-sm no-print sticky top-2 z-40">
                     <div class="flex items-center gap-3">
                         <i :class="notification.type === 'success' ? 'fa-solid fa-circle-check text-emerald-600' : 'fa-solid fa-triangle-exclamation text-amber-600'" class="text-xl"></i>
                         <span class="font-medium" x-text="notification.message"></span>
@@ -925,7 +925,7 @@
                         .map((item, index) => ({ ...item, id: item.id || Date.now() + index, title: String(item.title || '').trim(), text: String(item.text || '').trim() }))
                         .filter(item => item.title && item.text);
                     if (cleaned.length !== this.standardObservations.length) {
-                        alert('Cada observación necesita un nombre corto y un texto. Las filas incompletas no se guardaron.');
+                        this.showNotification('Cada observación necesita un nombre corto y un texto. Las filas incompletas no se guardaron.', 'warning');
                         this.standardObservations = cleaned;
                     } else {
                         this.standardObservations = cleaned;
@@ -946,13 +946,13 @@
                 registerPayment(amount = this.paymentDraft.amount) {
                     const paymentAmount = Number(amount);
                     if (!Number.isFinite(paymentAmount) || paymentAmount <= 0) {
-                        alert('Ingresa un monto de pago mayor a cero.');
+                        this.showNotification('Ingresa un monto de pago mayor a cero.', 'warning');
                         return;
                     }
                     this.recalculatePaymentTotals();
                     const balance = Math.max(0, this.calculateTotal() - Number(this.currentQuote.paidAmount || 0));
                     if (paymentAmount > balance) {
-                        alert(`El pago supera el saldo pendiente de $${this.formatNumber(balance)}.`);
+                        this.showNotification(`El pago supera el saldo pendiente de $${this.formatNumber(balance)}.`, 'warning');
                         return;
                     }
                     if (!this.currentQuote.paymentEntries) this.currentQuote.paymentEntries = [];
@@ -1039,7 +1039,7 @@
 
                 downloadCalendarEvent(quote) {
                     if (!quote.eventDate) {
-                        alert('Esta cotización no tiene fecha de evento.');
+                        this.showNotification('Esta cotización no tiene fecha de evento.', 'warning');
                         return;
                     }
                     const date = quote.eventDate.replace(/-/g, '');
@@ -1147,7 +1147,7 @@
 
                 saveCatalogItem() {
                     if (!String(this.editingCatalogItem.name || '').trim() || !Number.isFinite(Number(this.editingCatalogItem.price)) || Number(this.editingCatalogItem.price) < 0) {
-                        alert('Ingresa un nombre y un precio válido (mayor o igual a cero).');
+                        this.showNotification('Ingresa un nombre y un precio válido (mayor o igual a cero).', 'warning');
                         return;
                     }
                     if (this.editingCatalogItem.id) {
@@ -1176,7 +1176,7 @@
                 saveQuote() {
                     const validationError = this.validateQuote();
                     if (validationError) {
-                        alert(validationError);
+                        this.showNotification(validationError, 'warning');
                         return;
                     }
                     const total = this.calculateTotal();
@@ -1260,12 +1260,12 @@
                     if (file) {
                         const maxLogoSize = 2 * 1024 * 1024;
                         if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-                            alert('Usa una imagen PNG, JPG o WebP.');
+                            this.showNotification('Usa una imagen PNG, JPG o WebP.', 'warning');
                             event.target.value = '';
                             return;
                         }
                         if (file.size > maxLogoSize) {
-                            alert('El logo no puede superar los 2 MB.');
+                            this.showNotification('El logo no puede superar los 2 MB.', 'warning');
                             event.target.value = '';
                             return;
                         }
@@ -1274,13 +1274,13 @@
                             this.settings.logo = e.target.result;
                             if (!this.persist('encanto_settings', this.settings)) {
                                 this.settings.logo = '';
-                                alert('El navegador no tiene espacio suficiente para guardar este logo. Prueba con una imagen más liviana o usa almacenamiento externo.');
+                                this.showNotification('El navegador no tiene espacio suficiente para guardar este logo. Prueba con una imagen más liviana o usa almacenamiento externo.', 'warning');
                                 event.target.value = '';
                                 return;
                             }
                             this.showNotification('Logo actualizado y guardado en este navegador.');
                         };
-                        reader.onerror = () => alert('No se pudo leer la imagen seleccionada.');
+                        reader.onerror = () => this.showNotification('No se pudo leer la imagen seleccionada.', 'warning');
                         reader.readAsDataURL(file);
                     }
                 },
@@ -1300,7 +1300,7 @@
 
                 shareWhatsApp() {
                     const validationError = this.validateQuote();
-                    if (validationError) { alert(validationError); return; }
+                    if (validationError) { this.showNotification(validationError, 'warning'); return; }
                     const total = this.calculateTotal();
                     const abono = Number(this.currentQuote.depositAmount) || 0;
                     const phone = this.normalizeWhatsAppPhone(this.currentQuote.clientPhone);
@@ -1326,8 +1326,8 @@
 
                 shareGmail() {
                     const validationError = this.validateQuote();
-                    if (validationError) { alert(validationError); return; }
-                    if (!String(this.currentQuote.clientEmail || '').trim()) { alert('Ingresa el email del cliente para preparar el correo.'); return; }
+                    if (validationError) { this.showNotification(validationError, 'warning'); return; }
+                    if (!String(this.currentQuote.clientEmail || '').trim()) { this.showNotification('Ingresa el email del cliente para preparar el correo.', 'warning'); return; }
                     const total = this.calculateTotal();
                     const abono = Number(this.currentQuote.depositAmount) || 0;
                     const subject = encodeURIComponent(`Propuesta para su evento - Encanto Producciones Concepción`);
