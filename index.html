@@ -294,14 +294,14 @@
                             <i class="fa-solid fa-list-check text-purple-500"></i> Detalle de Servicios e Ítems
                         </h3>
                         <!-- Quick Add Selector -->
-                        <div class="flex items-center gap-2 w-full sm:w-auto no-print">
-                            <select x-model="selectedCatalogItemId" class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto no-print">
+                            <select x-model="selectedCatalogItemId" class="w-full sm:w-auto min-h-11 px-3 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-white">
                                 <option value="">-- Seleccionar del Catálogo --</option>
                                 <template x-for="item in catalog" :key="item.id">
                                     <option :value="item.id" x-text="item.name + ' - $' + formatNumber(item.price)"></option>
                                 </template>
                             </select>
-                            <button @click="addSelectedCatalogItem()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition">
+                            <button type="button" @click="addSelectedCatalogItem()" class="w-full sm:w-auto min-h-11 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition shadow-sm">
                                 <i class="fa-solid fa-plus"></i> Agregar Ítem
                             </button>
                         </div>
@@ -476,6 +476,16 @@
                                 3. Cotización válida por 7 días a contar de su fecha de emisión. Sujeta a disponibilidad de agenda.
                             </p>
                         </div>
+                    </div>
+
+                    <div class="no-print mt-8 rounded-xl border border-indigo-200 bg-indigo-50 p-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
+                        <div class="mb-3 sm:mb-0">
+                            <p class="font-bold text-indigo-900">¿Terminaste la cotización?</p>
+                            <p class="text-xs text-indigo-700">Guárdala aquí sin volver al inicio.</p>
+                        </div>
+                        <button type="button" @click="saveQuote()" class="w-full sm:w-auto min-h-12 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar cotización
+                        </button>
                     </div>
 
                     <div class="quote-footer mt-8 text-center text-xs text-slate-400 pt-4 border-t border-slate-100">
