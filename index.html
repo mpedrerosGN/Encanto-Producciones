@@ -58,9 +58,9 @@
             .quote-hero::before, .quote-hero::after { content: '' !important; position: absolute !important; border-radius: 999px !important; opacity: .28 !important; pointer-events: none !important; }
             .quote-hero::before { width: 110px !important; height: 110px !important; right: -30px !important; bottom: -45px !important; background: #f9a8d4 !important; box-shadow: -95px -25px 0 12px #c4b5fd !important; }
             .quote-hero::after { width: 14px !important; height: 14px !important; right: 118px !important; top: 24px !important; background: #fbbf24 !important; box-shadow: 24px 13px 0 #f472b6, 48px -4px 0 #818cf8, 72px 17px 0 #c084fc !important; }
-            .party-decoration { display: block !important; z-index: 2 !important; }
+            .party-decoration { display: block !important; z-index: 4 !important; position: absolute !important; right: 24px !important; left: auto !important; top: 18px !important; }
             .party-balloon { width: 15px !important; height: 21px !important; }
-            .quote-hero > div { position: relative !important; z-index: 3 !important; }
+            .quote-hero > div:not(.party-decoration) { position: relative !important; z-index: 3 !important; }
             .quote-client { background: linear-gradient(90deg, #fff 0%, #fff 50%, #faf5ff 100%) !important; border-left: 7px solid #f472b6 !important; border-right: 7px solid #818cf8 !important; padding: 20px 25px !important; }
             .quote-client .section-heading, .section-heading { color: #7c3aed !important; font-size: 9pt !important; letter-spacing: .08em !important; }
             .quote-client .client-grid > div { background: #faf5ff !important; border: 1px solid #e9d5ff !important; border-radius: 10px !important; padding: 7px 10px !important; }
@@ -70,6 +70,8 @@
             .print-container thead tr { background: linear-gradient(90deg, #fce7f3, #ede9fe, #e0e7ff) !important; color: #5b21b6 !important; }
             .print-container tbody tr:nth-child(even) { background: #faf5ff !important; }
             .print-container .quote-summary { padding: 18px !important; border-radius: 16px !important; }
+            .print-container .quote-summary { margin-top: 30px !important; position: relative !important; }
+            .print-container .quote-summary::after { content: '✦  ✦  ✦' !important; position: absolute !important; top: -22px !important; left: 0 !important; right: 0 !important; text-align: center !important; color: #ec4899 !important; letter-spacing: 10px !important; font-size: 10pt !important; }
             .print-container .quote-summary::before { content: '✨  RESUMEN DE TU FIESTA' !important; display: block !important; color: #7c3aed !important; font-weight: 800 !important; letter-spacing: .08em !important; font-size: 8pt !important; margin-bottom: 8px !important; }
             .print-container .quote-bank h4::before { content: '💳' !important; margin-right: 5px !important; }
             .print-container .quote-terms h4::before { content: '🎈' !important; margin-right: 5px !important; }
@@ -278,32 +280,32 @@
                     
                     <div class="client-grid grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Cliente *</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-solid fa-user text-pink-500 mr-1"></i>Nombre del Cliente *</label>
                             <span class="quote-print-label hidden print-only text-sm font-semibold" x-text="currentQuote.clientName || '—'"></span>
                             <input type="text" x-model="currentQuote.clientName" placeholder="Ej: Maria José Pérez" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Teléfono WhatsApp *</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500 mr-1"></i>Teléfono WhatsApp *</label>
                             <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.clientPhone || '—'"></span>
                             <input type="tel" x-model="currentQuote.clientPhone" placeholder="+56 9 8765 4321" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Email del Cliente</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-solid fa-envelope text-indigo-500 mr-1"></i>Email del Cliente</label>
                             <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.clientEmail || '—'"></span>
                             <input type="email" x-model="currentQuote.clientEmail" placeholder="cliente@ejemplo.cl" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Fecha del Evento *</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-solid fa-calendar-days text-purple-500 mr-1"></i>Fecha del Evento *</label>
                             <span class="quote-print-label hidden print-only text-sm font-semibold" x-text="formatDate(currentQuote.eventDate)"></span>
                             <input type="date" x-model="currentQuote.eventDate" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Lugar del Evento / Dirección en Concepción</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>Lugar del Evento / Dirección en Concepción</label>
                             <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.eventAddress || '—'"></span>
                             <input type="text" x-model="currentQuote.eventAddress" placeholder="Ej: Av. Principal 123, casa particular" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-600 mb-1">Comuna *</label>
+                            <label class="block text-xs font-bold text-slate-600 mb-1"><i class="fa-solid fa-map-location-dot text-sky-500 mr-1"></i>Comuna *</label>
                             <span class="quote-print-label hidden print-only text-sm" x-text="currentQuote.eventCommune || 'Concepción'"></span>
                             <select x-model="currentQuote.eventCommune" class="w-full px-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm transition">
                                 <template x-for="commune in communes" :key="commune"><option :value="commune" x-text="commune"></option></template>
