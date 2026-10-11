@@ -53,7 +53,20 @@
             .print-container .shadow, .print-container .shadow-sm, .print-container .shadow-md { box-shadow: none !important; }
             .print-container { border: 1px solid #e2e8f0 !important; border-radius: 20px !important; }
             .quote-hero { background: linear-gradient(125deg, #fce7f3 0%, #f3e8ff 52%, #e0e7ff 100%) !important; border-bottom: 3px solid #c084fc !important; }
-            .party-decoration { display: block !important; }
+            .quote-hero { position: relative !important; min-height: 180px !important; overflow: hidden !important; border: 2px solid #f472b6 !important; border-radius: 18px 18px 0 0 !important; }
+            .quote-hero::before, .quote-hero::after { content: '' !important; position: absolute !important; border-radius: 999px !important; opacity: .28 !important; pointer-events: none !important; }
+            .quote-hero::before { width: 110px !important; height: 110px !important; right: -30px !important; bottom: -45px !important; background: #f9a8d4 !important; box-shadow: -95px -25px 0 12px #c4b5fd !important; }
+            .quote-hero::after { width: 14px !important; height: 14px !important; right: 118px !important; top: 24px !important; background: #fbbf24 !important; box-shadow: 24px 13px 0 #f472b6, 48px -4px 0 #818cf8, 72px 17px 0 #c084fc !important; }
+            .party-decoration { display: block !important; z-index: 2 !important; }
+            .party-balloon { width: 15px !important; height: 21px !important; }
+            .quote-hero > div { position: relative !important; z-index: 3 !important; }
+            .quote-client { background: #fff !important; border-left: 6px solid #f9a8d4 !important; border-right: 6px solid #c4b5fd !important; }
+            .quote-client .section-heading, .section-heading { color: #7c3aed !important; font-size: 9pt !important; letter-spacing: .08em !important; }
+            .quote-client .client-grid > div { background: #faf5ff !important; border: 1px solid #e9d5ff !important; border-radius: 10px !important; padding: 7px 10px !important; }
+            .quote-summary { background: linear-gradient(135deg, #fdf2f8, #f5f3ff) !important; border: 2px solid #c4b5fd !important; }
+            .quote-bank { border-color: #bfdbfe !important; background: #eff6ff !important; }
+            .quote-terms { border-color: #f9a8d4 !important; background: #fdf2f8 !important; }
+            .quote-footer { color: #7c3aed !important; font-weight: 600 !important; }
             .quote-summary { box-shadow: 0 0 0 2px #f5d0fe !important; }
             .print-container .quote-print-title { display: block !important; }
             .print-container .quote-print-label { display: block !important; }
