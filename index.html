@@ -862,7 +862,7 @@
 
                 syncNextQuoteNumber() {
                     const highest = this.history.reduce((max, quote) => {
-                        const match = String(quote.correlative || '').match(/^ENC-\\d{4}-(\\d+)$/);
+                        const match = String(quote.correlative || '').match(/^ENC-\d{4}-(\d+)$/);
                         return match ? Math.max(max, Number(match[1])) : max;
                     }, 0);
                     this.nextQuoteNumber = Math.max(this.nextQuoteNumber, highest + 1);
@@ -883,6 +883,20 @@
 
                 formatNumber(num) {
                     return Math.round(num || 0).toLocaleString('es-CL');
+                },
+
+                getLocalDateString(date = new Date()) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+
+                normalizeWhatsAppPhone(value) {
+                    const digits = String(value || '').replace(/\D/g, '');
+                    if (digits.startsWith('56')) return digits;
+                    if (digits.length === 9 && digits.startsWith('9')) return `56${digits}`;
+                    return digits;
                 },
 
                 formatDate(value) {
@@ -942,7 +956,7 @@
                         return;
                     }
                     if (!this.currentQuote.paymentEntries) this.currentQuote.paymentEntries = [];
-                    const today = new Date().toISOString().slice(0, 10);
+                    const today = this.getLocalDateString();
                     this.currentQuote.paymentEntries.push({ id: Date.now(), amount: paymentAmount, date: today, method: this.paymentDraft.method || 'Transferencia', detail: String(this.paymentDraft.detail || '').trim() });
                     this.recalculatePaymentTotals();
                     this.paymentDraft.amount = 0;
@@ -993,12 +1007,12 @@
                 },
 
                 get overduePaymentQuotes() {
-                    const today = new Date().toISOString().slice(0, 10);
+                    const today = this.getLocalDateString();
                     return this.outstandingPaymentQuotes.filter(quote => quote.paymentDueDate && quote.paymentDueDate < today);
                 },
 
                 refreshPaymentAlerts() {
-                    const today = new Date().toISOString().slice(0, 10);
+                    const today = this.getLocalDateString();
                     this.paymentAlerts = this.history.filter(quote => {
                         const unpaid = Number(quote.paidAmount || 0) < Number(quote.totalAmount || 0);
                         return unpaid && (quote.status === 'Aceptada' || (quote.paymentDueDate && quote.paymentDueDate <= today));
@@ -1007,7 +1021,7 @@
 
                 paymentAlertText(quote) {
                     const balance = Math.max(0, Number(quote.totalAmount || 0) - Number(quote.paidAmount || 0));
-                    const overdue = quote.paymentDueDate && quote.paymentDueDate < new Date().toISOString().slice(0, 10);
+                    const overdue = quote.paymentDueDate && quote.paymentDueDate < this.getLocalDateString();
                     return `${overdue ? 'VENCIDO · ' : ''}Saldo $${this.formatNumber(balance)}${quote.paymentDueDate ? ` · vence ${this.formatDate(quote.paymentDueDate)}` : ' · sin fecha límite'}`;
                 },
 
@@ -1234,7 +1248,7 @@
                     return this.history.filter(h => {
                         const matchesSearch = !q || (h.clientName && h.clientName.toLowerCase().includes(q)) || (h.correlative && h.correlative.toLowerCase().includes(q));
                         const outstanding = Number(h.paidAmount || 0) < Number(h.totalAmount || 0);
-                        const overdue = h.paymentDueDate && h.paymentDueDate < new Date().toISOString().slice(0, 10);
+                        const overdue = h.paymentDueDate && h.paymentDueDate < this.getLocalDateString();
                         const matchesPayment = this.historyPaymentFilter === 'Todos' || (this.historyPaymentFilter === 'Pendientes' && outstanding) || (this.historyPaymentFilter === 'Vencidos' && outstanding && overdue);
                         return matchesSearch && matchesPayment;
                     });
@@ -1244,8 +1258,14 @@
                 handleLogoUpload(event) {
                     const file = event.target.files[0];
                     if (file) {
+                        const maxLogoSize = 2 * 1024 * 1024;
                         if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
                             alert('Usa una imagen PNG, JPG o WebP.');
+                            event.target.value = '';
+                            return;
+                        }
+                        if (file.size > maxLogoSize) {
+                            alert('El logo no puede superar los 2 MB.');
                             event.target.value = '';
                             return;
                         }
@@ -1283,7 +1303,7 @@
                     if (validationError) { alert(validationError); return; }
                     const total = this.calculateTotal();
                     const abono = Number(this.currentQuote.depositAmount) || 0;
-                    const phone = String(this.currentQuote.clientPhone || '').replace(/\D/g, '');
+                    const phone = this.normalizeWhatsAppPhone(this.currentQuote.clientPhone);
                     
                     let text = `¡Hola ${this.currentQuote.clientName || ''}! ✨ Le saludamos de *Encanto Producciones* (Concepción).\n\n`;
                     text += `Adjuntamos el resumen de la propuesta para su evento:\n`;
